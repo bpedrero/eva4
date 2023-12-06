@@ -1,3 +1,6 @@
+"""
+GET https://apic-ip-address/api/node/class/faultInst.xml?query-target-filter=and(eq(faultInst.cause,"config-failure"))
+"""
 import requests
 import json
 import conf
@@ -27,7 +30,7 @@ API_Token = pedir_token()
 #print("\nAPI_Token: "+API_Token)
 print("&"*70)
 
-url =  "https://10.10.20.14/api/class/topSystem.json"
+url =  "https://10.10.20.14/api/node/class/faultInst.json"
 cabecera = {"Content-Type": "application/json"}
 cookie = {"APIC-cookie": API_Token}
 
@@ -35,11 +38,14 @@ respuesta = requests.get(url,headers=cabecera,cookies=cookie,verify=False)
 respuesta_json = respuesta.json()
 #print (respuesta_json)
 
-for i in range(0,4):
-    name = respuesta_json["imdata"][i]["topSystem"]["attributes"]["dn"]
-    address = respuesta_json["imdata"][i]["topSystem"]["attributes"]["address"]
-    fabricMAC = respuesta_json["imdata"][i]["topSystem"]["attributes"]["fabricMAC"]
-    state = respuesta_json["imdata"][i]["topSystem"]["attributes"]["state"]
-    lastRebootTime = respuesta_json["imdata"][i]["topSystem"]["attributes"]["lastRebootTime"]
+#respuesta_json["imdata"][0]["faultInst"]["attributes"]["severity"]
 
-    print("Nombre: "+name+"     "+"IP-address: "+address+"     "+"MAC-address: "+fabricMAC+"     ", "state: "+state+"     "+"ÚltimoReboot: "+lastRebootTime)
+for i in range(0,814):
+    created = respuesta_json["imdata"][i]["faultInst"]["attributes"]["created"]
+    severity = respuesta_json["imdata"][i]["faultInst"]["attributes"]["severity"]
+    code = respuesta_json["imdata"][i]["faultInst"]["attributes"]["code"]
+    type = respuesta_json["imdata"][i]["faultInst"]["attributes"]["type"]
+    cause = respuesta_json["imdata"][i]["faultInst"]["attributes"]["cause"]
+    if respuesta_json["imdata"][i]["faultInst"]["attributes"]["severity"] == 'warning':
+        print("Fecha/Hora: " +created+"     "+"Severidad: " +severity+"     "+"Código: "+code+"     "+"Tipo: "+type+"     "+"Causa: "+cause)
+
